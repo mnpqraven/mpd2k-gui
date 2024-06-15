@@ -1,34 +1,29 @@
+use crate::config::DotfileSchema;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-// Root procedures
-#[taurpc::procedures]
-pub trait Api {
-    async fn hello_world();
+#[derive(Clone)]
+pub struct AppState {
+    pub dot_config: DotfileSchema,
 }
 
 #[derive(Clone)]
-pub struct AppState {}
+pub struct AppStateArc(pub Arc<Mutex<AppState>>);
 
-#[derive(Clone)]
-pub struct AppStateArc(Arc<Mutex<AppState>>);
-
-#[taurpc::resolvers]
-impl Api for AppStateArc {
-    async fn hello_world(self) {
-        println!("Hello world");
+impl Default for AppStateArc {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
-// Nested procedures, you can also do this (path = "api.events.users")
-#[taurpc::procedures(path = "events")]
-pub trait Events {
-    #[taurpc(event)]
-    async fn event();
+impl AppStateArc {
+    pub fn new() -> Self {
+        let state = AppState {
+            dot_config: DotfileSchema::parse().unwrap(),
+        };
+        Self(Arc::new(Mutex::new(state)))
+    }
+    pub fn arced(&self) -> Arc<Mutex<AppState>> {
+        self.0.clone()
+    }
 }
-
-#[derive(Clone)]
-pub struct EventsImpl;
-
-#[taurpc::resolvers]
-impl Events for EventsImpl {}

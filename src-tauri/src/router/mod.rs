@@ -1,12 +1,10 @@
-use crate::{
-    error::AppError,
-    state::{Api, AppStateArc, Events, EventsImpl},
-};
+pub mod root;
+
+use crate::{error::AppError, state::AppStateArc};
+use root::RootApi;
 use taurpc::Router;
 
-pub async fn create_router() -> Result<Router, AppError> {
-    let router = Router::new()
-        .merge(AppStateArc.into_handler())
-        .merge(EventsImpl.into_handler());
+pub async fn create_router(state: AppStateArc) -> Result<Router, AppError> {
+    let router = Router::new().merge(AppStateArc::into_handler(state));
     Ok(router)
 }

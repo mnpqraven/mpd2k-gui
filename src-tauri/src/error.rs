@@ -27,6 +27,14 @@ pub enum AppError {
     InvalidPath(String),
     #[error("This feature is not yet unimplemented")]
     Unimplemented,
+
+    #[error("failed to parse csv cache file")]
+    CsvParse,
+
+    #[error("no config")]
+    NoConfig,
+    #[error("bad config")]
+    BadConfig,
 }
 
 impl AppError {

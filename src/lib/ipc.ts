@@ -1,5 +1,4 @@
-import { createTauRPCProxy } from '../bindings/taurpc';
-
-const rpc = await createTauRPCProxy();
-
-export { rpc };
+export async function rpc() {
+  const { createTauRPCProxy } = await import("../bindings/taurpc");
+  return await createTauRPCProxy();
+}

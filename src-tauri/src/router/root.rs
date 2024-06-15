@@ -4,7 +4,7 @@ use tauri::AppHandle;
 // Root procedures
 #[taurpc::procedures(event_trigger = RootApiEvent, export_to = "../src/bindings/taurpc.ts")]
 pub trait RootApi {
-    async fn init(app_handle: AppHandle<tauri::Wry>);
+    async fn load_all(app_handle: AppHandle<tauri::Wry>);
 
     #[taurpc(event)]
     async fn load_music(data: Vec<AlbumIpc>);
@@ -12,7 +12,8 @@ pub trait RootApi {
 
 #[taurpc::resolvers]
 impl RootApi for AppStateArc {
-    async fn init(self, app_handle: AppHandle<tauri::Wry>) {
+    /// load all audio tracks from the library root
+    async fn load_all(self, app_handle: AppHandle<tauri::Wry>) {
         println!("loading music");
 
         let inner = self.arced();

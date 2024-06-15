@@ -2,7 +2,7 @@
 
 export type AlbumDate = { year: number; month: number | null; day: number | null }
 
-export type AlbumKv = { meta: AlbumMetaIpc; tracks: AudioTrackIpc[] }
+export type AlbumIpc = { meta: AlbumMetaIpc; tracks: AudioTrackIpc[] }
 
 export type AlbumMetaIpc = { album_artist: string | null; date: SomeAlbumDate; name: string | null }
 
@@ -25,11 +25,11 @@ export type MpdSubSchema = { addr: string; port: number }
 
 export type SomeAlbumDate = AlbumDate | null
 
-export type TauRpcRootApiInputTypes = { proc_name: "init"; input_type: null } | { proc_name: "load_music"; input_type: { __taurpc_type: AlbumKv[] } }
+export type TauRpcRootApiInputTypes = { proc_name: "load_all"; input_type: null } | { proc_name: "load_music"; input_type: { __taurpc_type: AlbumIpc[] } }
 
-export type TauRpcRootApiOutputTypes = { proc_name: "init"; output_type: null } | { proc_name: "load_music"; output_type: null }
+export type TauRpcRootApiOutputTypes = { proc_name: "load_all"; output_type: null } | { proc_name: "load_music"; output_type: null }
 
-const ARGS_MAP = {"":"{\"load_music\":[\"data\"],\"init\":[]}"}
+const ARGS_MAP = {"":"{\"load_all\":[],\"load_music\":[\"data\"]}"}
 import { createTauRPCProxy as createProxy } from "taurpc"
 
 export const createTauRPCProxy = () => createProxy<Router>(ARGS_MAP)

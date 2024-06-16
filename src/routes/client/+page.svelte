@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { getAppStore, getClientViewStore } from "$lib/state.svelte";
+  import { getAppStore } from "$lib/state/appStore.svelte";
+  import { getClientViewStore } from "$lib/state/clientView.svelte";
   import AlbumCollapse from "./AlbumCollapse/AlbumCollapse.svelte";
   import { PanelList } from "./PanelList";
 
@@ -22,9 +23,12 @@
 <div class="flex h-full justify-between">
   <PanelList {albumArtists} />
 
-  <div class="flex-1 flex flex-col gap-4">
+  <div class="flex flex-1 flex-col gap-4">
     {#each libTree as album (album["meta"]["name"])}
-      <AlbumCollapse open={clientView.selectedAlbum === album.meta.name} {album} />
+      <AlbumCollapse
+        open={clientView.selectedAlbum === album.meta.name}
+        {album}
+      />
     {/each}
   </div>
 

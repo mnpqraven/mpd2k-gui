@@ -3,7 +3,7 @@
   import type { HTMLAttributes } from "svelte/elements";
   import { type Props } from "./index";
   import { Button } from "$lib/components/ui/button";
-  import { getClientViewStore } from "$lib/state.svelte";
+  import { getClientViewStore } from "$lib/state/clientView.svelte";
 
   type $$Props = HTMLAttributes<HTMLDivElement> & Props;
 

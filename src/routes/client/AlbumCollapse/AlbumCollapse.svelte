@@ -1,7 +1,9 @@
 <script lang="ts">
   import * as Collapsible from "$lib/components/ui/collapsible";
-  import type { AlbumIpc } from "../../../bindings/taurpc";
-  import { getClientViewStore } from "$lib/state.svelte";
+  import type { AlbumIpc, AudioTrackIpc } from "../../../bindings/taurpc";
+  import { Button } from "$lib/components/ui/button";
+  import { rpc } from "$lib/ipc";
+  import { getClientViewStore } from "$lib/state/clientView.svelte";
   export let open: boolean;
   export let album: AlbumIpc;
 
@@ -13,7 +15,11 @@
   }
 
   const rows = Math.ceil(album.tracks.length / 2);
-  console.log(rows);
+  async function onPlay(track: AudioTrackIpc) {
+    console.log("playing", track);
+    const r = await rpc();
+    await r.playback.play(track);
+  }
 </script>
 
 <Collapsible.Root {open} onOpenChange={onSelect} class="flex">
@@ -23,14 +29,18 @@
     style={`grid-template-rows: repeat(${rows}, minmax(0, 1fr))`}
   >
     {#each album.tracks as track (track["path"])}
-      <div class="flex gap-2">
+      <Button
+        class="flex gap-2"
+        ondblclick={() => onPlay(track)}
+        variant="outline"
+      >
         <div>{track.track_no}</div>
         <div class="flex flex-1 flex-col text-left">
           <div>{track.name}</div>
           <div>FLAC</div>
         </div>
         <div>1:00</div>
-      </div>
+      </Button>
     {/each}
   </Collapsible.Content>
 </Collapsible.Root>

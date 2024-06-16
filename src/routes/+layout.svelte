@@ -6,25 +6,36 @@
   import { NowPlayingBar } from "$lib/components/shared/NowPlayingBar";
   import { rpc } from "$lib/ipc";
   import { onDestroy, onMount } from "svelte";
-  import { setAppStore, setClientViewStore } from "$lib/state.svelte";
+  import { setAppStore } from "$lib/state/appStore.svelte";
   import type { UnlistenFn } from "@tauri-apps/api/event";
+  import { setClientViewStore } from "$lib/state/clientView.svelte";
+  import { setPlaybackStore } from "$lib/state/playback.svelte";
 
-  let unlisten: UnlistenFn;
+  let unlisten: UnlistenFn[] = [];
 
   let libtree = setAppStore();
   setClientViewStore();
+  let playbackState = setPlaybackStore();
 
   onMount(async () => {
-    (await rpc()).load_all();
-    unlisten = (await rpc()).load_music.on((e) => {
-      console.log("yo from frontend", e);
+    let r = await rpc();
+    r.load_all();
+    let fn_lib = (await rpc()).load_music.on((e) => {
+      console.log("[event] load_music", e);
       // update stuff from init
       libtree.libTree = [...e];
     });
+
+    let fn_playback = r.playback.ev_playback_state.on((e) => {
+      console.log("[event] ev_playback_state", e);
+      playbackState.updateFromState(e);
+    });
+
+    unlisten = [...unlisten, fn_lib, fn_playback];
   });
 
   onDestroy(() => {
-    unlisten();
+    unlisten.forEach((fn) => fn());
   });
 </script>
 

@@ -55,6 +55,11 @@ class PlaybackStore {
     await r.playback.play(track);
     this.elapsedDuration = 0;
   }
+
+  async play_pause() {
+    const r = await rpc();
+    this.status = await r.playback.play_pause();
+  }
 }
 
 export function setPlaybackStore() {

@@ -9,7 +9,7 @@ use tokio::sync::Mutex;
 pub trait PlaybackApi {
     async fn play(track: AudioTrackIpc, app_handle: AppHandle) -> Result<PlaybackState, AppError>;
 
-    async fn play_pause() -> Result<PlaybackState, AppError>;
+    async fn play_pause() -> Result<PlayStatus, AppError>;
     async fn set_shuffle(to: bool) -> Result<bool, AppError>;
     async fn cycle_repeat() -> Result<RepeatStatus, AppError>;
 
@@ -17,7 +17,7 @@ pub trait PlaybackApi {
     async fn ev_playback_state(app_handle: AppHandle<tauri::Wry>, playback_state: PlaybackState);
 }
 
-#[derive(Clone, Serialize, Deserialize, specta::Type, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, Default)]
 pub enum PlayStatus {
     Play,
     Pause,
@@ -98,8 +98,9 @@ impl PlaybackApi for PlaybackStateImpl {
     }
 
     /// toggle the play state of now plyaing
-    async fn play_pause(self) -> Result<PlaybackState, AppError> {
+    async fn play_pause(self) -> Result<PlayStatus, AppError> {
         let mut data = self.0.lock().await;
+        dbg!(&data.status);
         if let Some(ref sink) = data.sink {
             match sink.is_paused() {
                 true => {
@@ -113,7 +114,7 @@ impl PlaybackApi for PlaybackStateImpl {
             }
         }
 
-        Ok(data.clone())
+        Ok(data.status.clone())
     }
 }
 

@@ -1,7 +1,12 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
+  import {
+    ContextMenu,
+    ContextMenuTrigger,
+  } from "$lib/components/ui/context-menu";
+  import ContextMenuContent from "$lib/components/ui/context-menu/context-menu-content.svelte";
+  import { Slider } from "$lib/components/ui/slider";
   import { Toggle } from "$lib/components/ui/toggle";
-  import { rpc } from "$lib/ipc";
   import { getPlaybackStore } from "$lib/state/playback.svelte";
   import { cn } from "$lib/utils";
   import {
@@ -12,14 +17,15 @@
     Shuffle,
     SkipBack,
     SkipForward,
+    Volume2,
   } from "lucide-svelte";
   import { onDestroy } from "svelte";
 
   let playbackState = getPlaybackStore();
-  console.log(playbackState);
+
+  let volume = [100];
 
   let lastTime = window.performance.now();
-  // duration of track
 
   let frame: number;
   (function update() {
@@ -36,18 +42,6 @@
     cancelAnimationFrame(frame);
   });
 
-  async function onPlayToggle() {
-    const r = await rpc();
-    if (playbackState.status === "Play") {
-      // resumes timer
-      console.log("playing");
-    } else {
-      // pause timer
-      console.log("pausing");
-    }
-    await r.playback.play_pause();
-  }
-
   function prettyPrintSecs(ms: number): string {
     const secs = ms / 1000;
     const mins = Math.floor(secs / 60);
@@ -60,12 +54,16 @@
   }
 </script>
 
-<div class="border-t">
+<div class="flex border-t">
   <Button variant="outline" class="p-2">
     <SkipBack />
   </Button>
 
-  <Button on:click={onPlayToggle} variant="outline" class="p-2">
+  <Button
+    on:click={() => playbackState.play_pause()}
+    variant="outline"
+    class="p-2"
+  >
     {#if playbackState.status === "Play"}
       <Pause />
     {:else}
@@ -103,4 +101,19 @@
   </Button>
 
   {prettyPrintSecs(playbackState.elapsedDuration)}
+
+  <ContextMenu>
+    <ContextMenuTrigger>
+      <Button variant="outline">
+        <Volume2 />
+      </Button>
+    </ContextMenuTrigger>
+    <ContextMenuContent class="flex w-48 gap-4 p-4">
+      <Slider max={100} step={1} bind:value={volume} />
+
+      <span class="w-8">
+        {volume[0]}
+      </span>
+    </ContextMenuContent>
+  </ContextMenu>
 </div>

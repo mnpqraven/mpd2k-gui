@@ -4,28 +4,36 @@
   import { Button } from "$lib/components/ui/button";
   import { rpc } from "$lib/ipc";
   import { getClientViewStore } from "$lib/state/clientView.svelte";
-  export let open: boolean;
+  import { getPlaybackStore } from "$lib/state/playback.svelte";
+
   export let album: AlbumIpc;
 
+  let open: boolean = true;
+  const rows = Math.ceil(album.tracks.length / 2);
   const clientView = getClientViewStore();
-  function onSelect(_: boolean) {
+  let playbackState = getPlaybackStore();
+
+  function onSelect(to: boolean) {
+    open = to;
     if (album.meta.name) {
       clientView.selectAlbum(album.meta.name);
     }
   }
 
-  const rows = Math.ceil(album.tracks.length / 2);
   async function onPlay(track: AudioTrackIpc) {
-    console.log("playing", track);
     const r = await rpc();
     await r.playback.play(track);
+    playbackState.elapsedDuration = 0;
   }
 </script>
 
-<Collapsible.Root {open} onOpenChange={onSelect} class="flex">
-  <Collapsible.Trigger class="h-16 w-16 bg-red-400"></Collapsible.Trigger>
+<Collapsible.Root {open} onOpenChange={onSelect}>
+  <Collapsible.Trigger class="flex gap-2">
+    <div class="h-16 w-16 bg-red-400"></div>
+    <span>{album.meta.name}</span>
+  </Collapsible.Trigger>
   <Collapsible.Content
-    class={`grid grid-flow-col grid-rows-6 gap-2`}
+    class={`grid grid-flow-col gap-2 mt-4`}
     style={`grid-template-rows: repeat(${rows}, minmax(0, 1fr))`}
   >
     {#each album.tracks as track (track["path"])}
@@ -39,7 +47,7 @@
           <div>{track.name}</div>
           <div>FLAC</div>
         </div>
-        <div>1:00</div>
+        <div>01:00</div>
       </Button>
     {/each}
   </Collapsible.Content>

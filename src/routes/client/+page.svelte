@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
+  import { ScrollArea } from "$lib/components/ui/scroll-area";
   import { getAppStore } from "$lib/state/appStore.svelte";
-  import { getClientViewStore } from "$lib/state/clientView.svelte";
   import AlbumCollapse from "./AlbumCollapse/AlbumCollapse.svelte";
   import { PanelList } from "./PanelList";
 
   const appstore = getAppStore();
-  const clientView = getClientViewStore();
   const libTree = $derived(appstore.libTree);
 
   let albumArtists = $derived(
@@ -23,14 +21,13 @@
 <div class="flex h-full justify-between">
   <PanelList {albumArtists} />
 
-  <div class="flex flex-1 flex-col gap-4">
-    {#each libTree as album (album["meta"]["name"])}
-      <AlbumCollapse
-        open={clientView.selectedAlbum === album.meta.name}
-        {album}
-      />
-    {/each}
-  </div>
+  <ScrollArea class="h-[calc(100vh-100px)] w-full">
+    <div class="flex flex-col gap-4">
+      {#each libTree as album (album["meta"]["name"])}
+        <AlbumCollapse {album} />
+      {/each}
+    </div>
+  </ScrollArea>
 
   <div class="w-60 rounded-md border">right</div>
 </div>

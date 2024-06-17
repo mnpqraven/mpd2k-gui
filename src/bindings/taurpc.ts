@@ -23,7 +23,7 @@ export type LibrarySubSchema = { root: string }
 
 export type MpdSubSchema = { addr: string; port: number }
 
-export type PlayStatus = "Play" | "Paused" | "Stopped"
+export type PlayStatus = "Play" | "Pause" | "Stopped"
 
 export type PlaybackState = { now_playing: AudioTrackIpc | null; duration_secs: number | null; status: PlayStatus }
 
@@ -37,7 +37,7 @@ export type TauRpcRootApiInputTypes = { proc_name: "load_all"; input_type: null 
 
 export type TauRpcRootApiOutputTypes = { proc_name: "load_all"; output_type: null } | { proc_name: "load_music"; output_type: null }
 
-const ARGS_MAP = {"":"{\"load_all\":[],\"load_music\":[\"data\"]}","playback":"{\"pause_toggle\":[],\"ev_playback_state\":[\"playback_state\"],\"play\":[\"track\"]}"}
+const ARGS_MAP = {"playback":"{\"pause_toggle\":[],\"ev_playback_state\":[\"playback_state\"],\"play\":[\"track\"]}","":"{\"load_all\":[],\"load_music\":[\"data\"]}"}
 import { createTauRPCProxy as createProxy } from "taurpc"
 
 export const createTauRPCProxy = () => createProxy<Router>(ARGS_MAP)

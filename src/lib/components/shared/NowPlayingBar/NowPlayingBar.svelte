@@ -2,12 +2,19 @@
   import { Button } from "$lib/components/ui/button";
   import { rpc } from "$lib/ipc";
   import { getPlaybackStore } from "$lib/state/playback.svelte";
-  import { Pause, Play } from "lucide-svelte";
+  import {
+    Pause,
+    Play,
+    Repeat,
+    Repeat1,
+    Shuffle,
+    SkipBack,
+    SkipForward,
+  } from "lucide-svelte";
   import { onDestroy } from "svelte";
 
   let playbackState = getPlaybackStore();
 
-  let elapsed = 0;
   let lastTime = window.performance.now();
   // duration of track
 
@@ -17,7 +24,7 @@
 
     const time = window.performance.now();
     if (playbackState.status === "Play") {
-      elapsed += time - lastTime;
+      playbackState.elapsedDuration += time - lastTime;
     }
     lastTime = time;
   })();
@@ -51,7 +58,9 @@
 </script>
 
 <div class="border-t">
-  {prettyPrintSecs(elapsed)}
+  <Button variant="outline" class="p-2">
+    <SkipBack />
+  </Button>
 
   <Button on:click={onPlayToggle} variant="outline" class="p-2">
     {#if playbackState.status === "Play"}
@@ -60,4 +69,20 @@
       <Play />
     {/if}
   </Button>
+
+  <Button variant="outline" class="p-2">
+    <SkipForward />
+  </Button>
+
+  <Button>
+    <Shuffle />
+  </Button>
+  <Button>
+    <Repeat />
+  </Button>
+  <Button>
+    <Repeat1 />
+  </Button>
+
+  {prettyPrintSecs(playbackState.elapsedDuration)}
 </div>

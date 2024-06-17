@@ -49,8 +49,6 @@
     <slot></slot>
   </div>
 
-  <div>tree length: {libtree.libTree.length}</div>
-
   <NowPlayingBar />
 </div>
 

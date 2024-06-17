@@ -20,7 +20,7 @@ pub trait PlaybackApi {
 #[derive(Clone, Serialize, Deserialize, specta::Type, Default)]
 pub enum PlayStatus {
     Play,
-    Paused,
+    Pause,
     #[default]
     Stopped,
 }
@@ -76,7 +76,7 @@ impl PlaybackApi for PlaybackState {
                 }
                 false => {
                     sink.pause();
-                    self.status = PlayStatus::Paused;
+                    self.status = PlayStatus::Pause;
                 }
             }
         }

@@ -1,7 +1,9 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
+  import { Toggle } from "$lib/components/ui/toggle";
   import { rpc } from "$lib/ipc";
   import { getPlaybackStore } from "$lib/state/playback.svelte";
+  import { cn } from "$lib/utils";
   import {
     Pause,
     Play,
@@ -14,6 +16,7 @@
   import { onDestroy } from "svelte";
 
   let playbackState = getPlaybackStore();
+  console.log(playbackState);
 
   let lastTime = window.performance.now();
   // duration of track
@@ -42,7 +45,7 @@
       // pause timer
       console.log("pausing");
     }
-    await r.playback.pause_toggle();
+    await r.playback.play_pause();
   }
 
   function prettyPrintSecs(ms: number): string {
@@ -74,14 +77,29 @@
     <SkipForward />
   </Button>
 
-  <Button>
+  <Toggle
+    class={cn("p-2")}
+    pressed={playbackState.shuffle}
+    onPressedChange={async (e) => {
+      await playbackState.setShuffle(e);
+    }}
+  >
     <Shuffle />
-  </Button>
-  <Button>
-    <Repeat />
-  </Button>
-  <Button>
-    <Repeat1 />
+  </Toggle>
+  <Button
+    variant="outline"
+    class="p-2"
+    on:click={async () => {
+      void playbackState.cycleRepeat();
+    }}
+  >
+    {#if playbackState.repeat === "Off"}
+      <Repeat class="text-muted" />
+    {:else if playbackState.repeat === "Repeat"}
+      <Repeat />
+    {:else}
+      <Repeat1 />
+    {/if}
   </Button>
 
   {prettyPrintSecs(playbackState.elapsedDuration)}

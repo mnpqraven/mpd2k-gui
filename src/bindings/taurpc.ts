@@ -25,19 +25,21 @@ export type MpdSubSchema = { addr: string; port: number }
 
 export type PlayStatus = "Play" | "Pause" | "Stopped"
 
-export type PlaybackState = { now_playing: AudioTrackIpc | null; duration_secs: number | null; status: PlayStatus }
+export type PlaybackState = { now_playing: AudioTrackIpc | null; duration_secs: number | null; status: PlayStatus; shuffle: boolean; repeat: RepeatStatus }
+
+export type RepeatStatus = "Off" | "Repeat" | "RepeatOne"
 
 export type SomeAlbumDate = AlbumDate | null
 
-export type TauRpcPlaybackApiInputTypes = { proc_name: "play"; input_type: { __taurpc_type: AudioTrackIpc } } | { proc_name: "pause_toggle"; input_type: null } | { proc_name: "ev_playback_state"; input_type: { __taurpc_type: PlaybackState } }
+export type TauRpcPlaybackApiInputTypes = { proc_name: "play"; input_type: { __taurpc_type: AudioTrackIpc } } | { proc_name: "play_pause"; input_type: null } | { proc_name: "set_shuffle"; input_type: { __taurpc_type: boolean } } | { proc_name: "cycle_repeat"; input_type: null } | { proc_name: "ev_playback_state"; input_type: { __taurpc_type: PlaybackState } }
 
-export type TauRpcPlaybackApiOutputTypes = { proc_name: "play"; output_type: PlaybackState } | { proc_name: "pause_toggle"; output_type: null } | { proc_name: "ev_playback_state"; output_type: null }
+export type TauRpcPlaybackApiOutputTypes = { proc_name: "play"; output_type: PlaybackState } | { proc_name: "play_pause"; output_type: PlaybackState } | { proc_name: "set_shuffle"; output_type: boolean } | { proc_name: "cycle_repeat"; output_type: RepeatStatus } | { proc_name: "ev_playback_state"; output_type: null }
 
 export type TauRpcRootApiInputTypes = { proc_name: "load_all"; input_type: null } | { proc_name: "load_music"; input_type: { __taurpc_type: AlbumIpc[] } }
 
 export type TauRpcRootApiOutputTypes = { proc_name: "load_all"; output_type: null } | { proc_name: "load_music"; output_type: null }
 
-const ARGS_MAP = {"playback":"{\"pause_toggle\":[],\"ev_playback_state\":[\"playback_state\"],\"play\":[\"track\"]}","":"{\"load_all\":[],\"load_music\":[\"data\"]}"}
+const ARGS_MAP = {"playback":"{\"play\":[\"track\"],\"ev_playback_state\":[\"playback_state\"],\"cycle_repeat\":[],\"set_shuffle\":[\"to\"],\"play_pause\":[]}","":"{\"load_all\":[],\"load_music\":[\"data\"]}"}
 import { createTauRPCProxy as createProxy } from "taurpc"
 
 export const createTauRPCProxy = () => createProxy<Router>(ARGS_MAP)

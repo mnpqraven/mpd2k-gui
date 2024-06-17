@@ -43,6 +43,7 @@
 		"clsx": "^2.1.1",
 		"cmdk-sv": "^0.0.17",
 		"embla-carousel-svelte": "^8.1.5",
+		"fuse.js": "^7.0.0",
 		"lucide-svelte": "^0.395.0",
 		"mode-watcher": "^0.3.0",
 		"paneforge": "^0.0.4",

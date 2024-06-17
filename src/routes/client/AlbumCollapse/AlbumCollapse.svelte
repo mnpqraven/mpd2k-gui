@@ -1,8 +1,7 @@
 <script lang="ts">
   import * as Collapsible from "$lib/components/ui/collapsible";
-  import type { AlbumIpc, AudioTrackIpc } from "../../../bindings/taurpc";
+  import type { AlbumIpc } from "../../../bindings/taurpc";
   import { Button } from "$lib/components/ui/button";
-  import { rpc } from "$lib/ipc";
   import { getClientViewStore } from "$lib/state/clientView.svelte";
   import { getPlaybackStore } from "$lib/state/playback.svelte";
 
@@ -19,12 +18,6 @@
       clientView.selectAlbum(album.meta.name);
     }
   }
-
-  async function onPlay(track: AudioTrackIpc) {
-    const r = await rpc();
-    await r.playback.play(track);
-    playbackState.elapsedDuration = 0;
-  }
 </script>
 
 <Collapsible.Root {open} onOpenChange={onSelect}>
@@ -33,13 +26,15 @@
     <span>{album.meta.name}</span>
   </Collapsible.Trigger>
   <Collapsible.Content
-    class={`grid grid-flow-col gap-2 mt-4`}
+    class={`mt-4 grid grid-flow-col gap-2`}
     style={`grid-template-rows: repeat(${rows}, minmax(0, 1fr))`}
   >
-    {#each album.tracks as track (track["path"])}
+    {#each album.tracks as track (track.path)}
       <Button
         class="flex gap-2"
-        ondblclick={() => onPlay(track)}
+        ondblclick={() => {
+          playbackState.play(track);
+        }}
         variant="outline"
       >
         <div>{track.track_no}</div>

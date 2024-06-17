@@ -10,6 +10,7 @@
   import type { UnlistenFn } from "@tauri-apps/api/event";
   import { setClientViewStore } from "$lib/state/clientView.svelte";
   import { setPlaybackStore } from "$lib/state/playback.svelte";
+  import SearchCommand from "$lib/components/shared/SearchCommand/SearchCommand.svelte";
 
   let unlisten: UnlistenFn[] = [];
 
@@ -45,11 +46,13 @@
     <ThemeSwitcher />
   </div>
 
-  <div class="flex-1 grow">
+  <div class="flex-1 grow" id="main-container">
     <slot></slot>
   </div>
 
   <NowPlayingBar />
 </div>
+
+<SearchCommand />
 
 <ModeWatcher />

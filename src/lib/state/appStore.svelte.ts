@@ -13,6 +13,8 @@ const defaultAppStore: AppStoreArgs = {
 class AppStore {
   libTree: AlbumIpc[] = $state([]);
   nowPlaying: AudioTrackIpc | undefined = $state(undefined);
+  commandOpen: boolean = $state(false);
+  searchOpen: boolean = $state(false);
 
   constructor(initialData: AppStoreArgs = defaultAppStore) {
     this.libTree = initialData.libTree;

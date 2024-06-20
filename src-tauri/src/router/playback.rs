@@ -13,6 +13,8 @@ pub trait PlaybackApi {
     async fn set_shuffle(to: bool) -> Result<bool, AppError>;
     async fn cycle_repeat() -> Result<RepeatStatus, AppError>;
 
+    async fn set_volume(to: f32);
+
     #[taurpc(event)]
     async fn ev_playback_state(app_handle: AppHandle<tauri::Wry>, playback_state: PlaybackState);
 }
@@ -115,6 +117,13 @@ impl PlaybackApi for PlaybackStateImpl {
         }
 
         Ok(data.status.clone())
+    }
+
+    async fn set_volume(self, to: f32) {
+        let data = self.0.lock().await;
+        if let Some(sink) = &data.sink {
+            sink.set_volume(to);
+        }
     }
 }
 

@@ -7,6 +7,7 @@
   import ContextMenuContent from "$lib/components/ui/context-menu/context-menu-content.svelte";
   import { Slider } from "$lib/components/ui/slider";
   import { Toggle } from "$lib/components/ui/toggle";
+  import { rpc } from "$lib/ipc";
   import { getPlaybackStore } from "$lib/state/playback.svelte";
   import { cn } from "$lib/utils";
   import {
@@ -22,8 +23,6 @@
   import { onDestroy } from "svelte";
 
   let playbackState = getPlaybackStore();
-
-  let volume = [100];
 
   let lastTime = window.performance.now();
 
@@ -109,10 +108,19 @@
       </Button>
     </ContextMenuTrigger>
     <ContextMenuContent class="flex w-48 gap-4 p-4">
-      <Slider max={100} step={1} bind:value={volume} />
+      <Slider
+        max={100}
+        step={1}
+        bind:value={playbackState.volume}
+        onValueChange={async (a) => {
+          // better to put in a mini debounce
+          const r = await rpc();
+          r.playback.set_volume(a[0]);
+        }}
+      />
 
       <span class="w-8">
-        {volume[0]}
+        {playbackState.volume[0]}
       </span>
     </ContextMenuContent>
   </ContextMenu>

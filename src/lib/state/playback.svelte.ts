@@ -11,6 +11,7 @@ class PlaybackStore {
 
   shuffle: boolean = $state(false);
   repeat: PlaybackState["repeat"] = $state("Off");
+  volume: number[] = $state([100])
 
   constructor() {
     // this.shuffle = false;
